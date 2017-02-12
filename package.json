@@ -47,7 +47,7 @@
   "dependencies": {
     "async": "^2.0.0",
     "aws-sdk": "^2.4.1",
-    "im-metadata": "^3.0.0",
+    "im-metadata": "git+https://github.com/mediapolis/node-im-metadata.git",
     "im-resize": "^2.3.1",
     "uuid": "^3.0.0"
   },
