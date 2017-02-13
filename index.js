@@ -36,7 +36,7 @@ Image.prototype.getMetadata = function getMetadata(src, cb) {
   metadata(src, {
     exif: this.upload.opts.returnExif,
     autoOrient: true,
-    quiet: false
+    quiet: true
   }, cb);
 };
 
