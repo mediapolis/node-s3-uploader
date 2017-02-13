@@ -36,6 +36,7 @@ Image.prototype.getMetadata = function getMetadata(src, cb) {
   metadata(src, {
     exif: this.upload.opts.returnExif,
     autoOrient: true,
+    quiet: false
   }, cb);
 };
 
@@ -52,6 +53,8 @@ Image.prototype.resizeVersions = function resizeVersions(results, cb) {
     prefix: this.upload.opts.resize.prefix,
     quality: this.upload.opts.resize.quality,
     versions: JSON.parse(JSON.stringify(this.upload.opts.versions)),
+  }, {
+    'quiet': true
   }, cb);
 };
 
@@ -73,7 +76,7 @@ Image.prototype.uploadVersions = function uploadVersions(results, cb) {
 Image.prototype.removeVersions = function removeVersions(results, cb) {
   each(results.uploads, (image, callback) => {
     if ((!this.upload.opts.cleanup.original && image.original) ||
-        (!this.upload.opts.cleanup.versions && !image.original)
+      (!this.upload.opts.cleanup.versions && !image.original)
     ) {
       return setTimeout(callback, 0);
     }
@@ -105,7 +108,9 @@ Image.prototype._upload = function _upload(dest, version, cb) {
   }
 
   this.upload.s3.putObject(options, (err, data) => {
-    if (err) { return cb(err); }
+    if (err) {
+      return cb(err);
+    }
 
     version.etag = data.ETag;
     version.key = options.Key;
@@ -125,34 +130,62 @@ const Upload = function Upload(bucketName, opts) {
     throw new TypeError('Bucket name can not be undefined');
   }
 
-  if (!this.opts.aws) { this.opts.aws = {}; }
-  if (!this.opts.aws.acl) { this.opts.aws.acl = 'private'; }
+  if (!this.opts.aws) {
+    this.opts.aws = {};
+  }
+  if (!this.opts.aws.acl) {
+    this.opts.aws.acl = 'private';
+  }
 
-  if (!this.opts.aws.httpOptions) { this.opts.aws.httpOptions = {}; }
+  if (!this.opts.aws.httpOptions) {
+    this.opts.aws.httpOptions = {};
+  }
   if (!this.opts.aws.httpOptions.timeout) {
     this.opts.aws.httpOptions.timeout = 10000;
   }
 
-  if (!this.opts.aws.maxRetries) { this.opts.aws.maxRetries = 3; }
-  if (!this.opts.aws.params) { this.opts.aws.params = {}; }
+  if (!this.opts.aws.maxRetries) {
+    this.opts.aws.maxRetries = 3;
+  }
+  if (!this.opts.aws.params) {
+    this.opts.aws.params = {};
+  }
   this.opts.aws.params.Bucket = bucketName;
-  if (!this.opts.aws.path) { this.opts.aws.path = ''; }
-  if (!this.opts.aws.region) { this.opts.aws.region = 'us-east-1'; }
-  if (!this.opts.aws.sslEnabled) { this.opts.aws.sslEnabled = true; }
+  if (!this.opts.aws.path) {
+    this.opts.aws.path = '';
+  }
+  if (!this.opts.aws.region) {
+    this.opts.aws.region = 'us-east-1';
+  }
+  if (!this.opts.aws.sslEnabled) {
+    this.opts.aws.sslEnabled = true;
+  }
 
-  if (!this.opts.cleanup) { this.opts.cleanup = {}; }
-  if (!this.opts.returnExif) { this.opts.returnExif = false; }
+  if (!this.opts.cleanup) {
+    this.opts.cleanup = {};
+  }
+  if (!this.opts.returnExif) {
+    this.opts.returnExif = false;
+  }
 
-  if (!this.opts.resize) { this.opts.resize = {}; }
-  if (!this.opts.resize.quality) { this.opts.resize.quality = 70; }
+  if (!this.opts.resize) {
+    this.opts.resize = {};
+  }
+  if (!this.opts.resize.quality) {
+    this.opts.resize.quality = 70;
+  }
 
-  if (!this.opts.versions) { this.opts.versions = []; }
+  if (!this.opts.versions) {
+    this.opts.versions = [];
+  }
 
   if (!this.opts.url && this.opts.aws.region === 'us-east-1') {
     this.opts.url = `https://s3.amazonaws.com/${bucketName}/`;
-  } else if (!this.opts.url && this.opts.aws.region === 'cn-north-1') {
+  }
+  else if (!this.opts.url && this.opts.aws.region === 'cn-north-1') {
     this.opts.url = `https://s3.${this.opts.aws.region}.amazonaws.com/${bucketName}/`;
-  } else if (!this.opts.url) {
+  }
+  else if (!this.opts.url) {
     this.opts.url = `https://s3-${this.opts.aws.region}.amazonaws.com/${bucketName}/`;
   }
 
