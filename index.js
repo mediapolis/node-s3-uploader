@@ -141,7 +141,7 @@ const Upload = function Upload(bucketName, opts) {
     this.opts.aws.httpOptions = {};
   }
   if (!this.opts.aws.httpOptions.timeout) {
-    this.opts.aws.httpOptions.timeout = 10000;
+    this.opts.aws.httpOptions.timeout = 120000;
   }
 
   if (!this.opts.aws.maxRetries) {
